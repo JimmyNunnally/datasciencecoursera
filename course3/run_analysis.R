@@ -17,12 +17,8 @@ colnames(features) <- c("n","functions")
 activity_labels <- read.table("UCI HAR Dataset/activity_labels.txt") 
 colnames(activity_labels) <- c("code", "activity")
 
-
-
-
 merged_x <- rbind(read.table("UCI HAR Dataset/test/X_test.txt"),read.table("UCI HAR Dataset/train/X_train.txt"))
 colnames(merged_x) <- features$functions
-
 
 merged_y <- rbind(read.table("UCI HAR Dataset/test/y_test.txt"),read.table("UCI HAR Dataset/train/y_train.txt"))
 colnames(merged_y) <- "code"
@@ -30,9 +26,7 @@ colnames(merged_y) <- "code"
 merged_subject <- rbind(read.table("UCI HAR Dataset/test/subject_test.txt"),read.table("UCI HAR Dataset/train/subject_train.txt"))
 colnames(merged_subject) <- "subject"
 
-
 complete_data <- cbind(merged_subject, merged_y, merged_x)
-
 
 #2 extracting mean and std
 dataset <- complete_data[, grep("subject|code|mean|std", names(complete_data))]
