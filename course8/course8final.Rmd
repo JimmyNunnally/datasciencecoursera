@@ -1,0 +1,121 @@
+---
+title: "course8hw"
+author: "Jimmy Nunnally"
+date: "February 5, 2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#Purpose Build machine learning model to predict work out classes
+#Load libraries
+#I will be using random forest model due to prior knowledge and the fact that they generally perform well
+
+```{r set   up}
+library(caret)
+library(randomForest)
+
+#You should create a report describing how you built your model, how you used cross validation, what you think the expected out of sample error is, and why you made the choices you did. You will also use your prediction model to predict 20 different test cases.
+
+
+#Download csv function. Found this online, using to download file
+downloadcsv <- function(url, nastrings) {
+  temp <- tempfile()
+  download.file(url, temp, method = "curl")
+  data <- read.csv(temp, na.strings = nastrings)
+  unlink(temp)
+  return(data)
+}
+
+trainurl <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+train <- downloadcsv(trainurl, c("", "NA", "#DIV/0!"))
+
+testurl <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+test <- downloadcsv(testurl, c("", "NA", "#DIV/0!"))
+
+
+
+```
+
+
+```{r EDA}
+
+#Examine our features
+head(test)
+dim(train)
+
+#Take a look at Our predictors
+table(train$classe)
+```
+
+
+```{r preprocess}
+#Preprocessing
+# Partition our data into test/train/validation splits. Test/train is already done for us, so we will reserve 20% for validation and aim for a 60/20/20. Assuming that 20% is already reserved for test than this would be 75% of whats remaining for train and 25% for validation
+#generating test/train split
+## 75% of the sample size
+set.seed(30)
+smp_size <- floor(0.75 * nrow(train))
+
+train_ind <- sample(seq_len(nrow(train)), size = smp_size)
+Training <- train[train_ind, ]
+Validation<- train[-train_ind, ]
+```
+
+```{r feature select}
+#Feature selection
+
+#Exclude near zero variance features as they are not predictive
+nzvcol <- nearZeroVar(Training)
+Training <- Training[, -nzvcol]
+
+# exclude features that are more than half NA values
+cntlength <- sapply(Training, function(x) {
+  sum(!(is.na(x) | x == ""))
+})
+
+NAcol <- names(cntlength[cntlength < 0.5 * length(Training$classe)])
+namescol <- c("X", "user_name", "raw_timestamp_part_1", "raw_timestamp_part_2", 
+                 "cvtd_timestamp", "new_window", "num_window")
+exclude<- c(namescol, NAcol)
+Training <- Training[, !names(Training) %in% exclude]
+
+```
+
+``` {r machine learning}
+#Machine learning
+
+Training$classe<-factor(Training$classe) 
+
+Model <- randomForest(classe ~ ., data = Training, importance = TRUE, ntrees = 50)
+
+prediction <- predict(Model, Training)
+print(confusionMatrix(prediction, Training$classe))
+```
+
+```{r validation}
+
+#validation
+
+Validation$classe<-factor(Validation$classe) 
+
+prediction_validation <- predict(Model, Validation)
+print(confusionMatrix(prediction_validation, Validation$classe))
+
+
+```
+
+``` {r answers}
+# Prediction/quiz answers 
+
+quizanswers <- predict(Model, test)
+print(quizanswers)
+
+```
+
+
+
+
