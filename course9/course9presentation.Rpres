@@ -1,0 +1,43 @@
+course9presentation
+========================================================
+author: Jimmy Nunnally
+date: 2/11/2020
+autosize: true
+
+First Slide
+========================================================
+
+- Cars are cool
+- Lets look at cars
+- And Stuff
+
+Slide With Code
+========================================================
+
+```{r 2}
+summary(cars)
+```
+
+Slide With Plot
+========================================================
+
+```{r 5, echo=FALSE}
+plot(cars)
+```
+
+Slide With Plot
+========================================================
+```{r 6, echo=FALSE}
+plot(mtcars$mpg~mtcars$hp)
+
+```
+
+
+Conclusion
+========================================================
+
+- Cars are cool
+- They go fast
+- And use gas
+
+

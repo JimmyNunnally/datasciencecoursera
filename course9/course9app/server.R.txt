@@ -1,0 +1,25 @@
+# Define server logic to plot various variables against mpg ----
+server <- function(input, output) {
+  RamenData <- read.csv(file = "ramen-ratings.csv")
+  RamenData$Stars<-as.numeric(RamenData$Stars)  
+  # Compute the formula text ----
+  # This is in a reactive expression since it is shared by the
+  # output$caption and output$mpgPlot functions
+  formulaText <- reactive({
+    paste("Stars ~", input$variable)
+  })
+  
+  # Return the formula text for printing as a caption ----
+  output$caption <- renderText({
+    formulaText()
+  })
+  
+  # Generate a plot of the requested variable against mpg ----
+  # and only exclude outliers if requested
+  output$RamenPlot <- renderPlot({
+    boxplot(as.formula(formulaText()),
+            data = RamenData,
+            outline = input$outliers,
+            col = "#75AADB", pch = 19)
+  })
+  

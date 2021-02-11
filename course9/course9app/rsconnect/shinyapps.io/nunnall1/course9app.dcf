@@ -1,0 +1,12 @@
+name: course9app
+title: course9app
+username:
+account: nunnall1
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3621311
+bundleId: 4210346
+url: https://nunnall1.shinyapps.io/course9app/
+when: 1613053579.48562
+asMultiple: FALSE
+asStatic: FALSE
